@@ -1,4 +1,4 @@
-import { SIPInputs, SIPResults, YearlyData, MonthlyData } from './types';
+import { SIPInputs, SIPResults, YearlyData, MonthlyData, SWPInputs, SWPResults, SWPYearlyData } from './types';
 
 export function calculateSIP(inputs: SIPInputs): SIPResults {
   const { years, inflation, monthlyInvestment, stepUp, cagr } = inputs;
@@ -64,5 +64,73 @@ export function calculateSIP(inputs: SIPInputs): SIPResults {
     finalYearSIP: currentMonthlySIP,
     yearlyData,
     monthlyData,
+  };
+}
+
+export function calculateSWP(inputs: SWPInputs): SWPResults {
+  const { corpus, monthlyWithdrawal, cagr, inflation, years } = inputs;
+  const monthlyRate = Math.pow(1 + cagr / 100, 1 / 12) - 1;
+
+  let currentCorpus = corpus;
+  let totalWithdrawn = 0;
+  let currentMonthlyWithdrawal = monthlyWithdrawal;
+  let corpusLastsMonths: number | null = null;
+  let monthsElapsed = 0;
+
+  const yearlyData: SWPYearlyData[] = [];
+
+  for (let year = 1; year <= years; year++) {
+    if (year > 1) {
+      // Step up withdrawal with inflation each year
+      currentMonthlyWithdrawal = currentMonthlyWithdrawal * (1 + inflation / 100);
+    }
+
+    const corpusStart = currentCorpus;
+    let annualWithdrawn = 0;
+    let growthEarned = 0;
+    let exhaustedThisYear = false;
+
+    for (let month = 1; month <= 12; month++) {
+      if (currentCorpus <= 0) break;
+      monthsElapsed++;
+
+      // Withdraw first, then grow remaining (start-of-month withdrawal)
+      const withdrawal = Math.min(currentMonthlyWithdrawal, currentCorpus);
+      currentCorpus -= withdrawal;
+      annualWithdrawn += withdrawal;
+      totalWithdrawn += withdrawal;
+
+      const growth = currentCorpus * monthlyRate;
+      growthEarned += growth;
+      currentCorpus += growth;
+
+      if (currentCorpus <= 0 && corpusLastsMonths === null) {
+        corpusLastsMonths = monthsElapsed;
+        exhaustedThisYear = true;
+        currentCorpus = 0;
+      }
+    }
+
+    yearlyData.push({
+      year,
+      monthlyWithdrawal: currentMonthlyWithdrawal,
+      annualWithdrawn,
+      totalWithdrawn,
+      corpusStart,
+      corpusEnd: Math.max(0, currentCorpus),
+      growthEarned,
+      corpusExhausted: exhaustedThisYear,
+    });
+
+    if (currentCorpus <= 0) break;
+  }
+
+  return {
+    initialCorpus: corpus,
+    totalWithdrawn,
+    finalCorpus: Math.max(0, currentCorpus),
+    corpusLastsYears: corpusLastsMonths !== null ? Math.floor(corpusLastsMonths / 12) : null,
+    corpusLastsMonths,
+    yearlyData,
   };
 }

@@ -62,3 +62,39 @@ export const PRESETS = {
   Balanced: { cagr: 12, stepUp: 5 },
   Growth: { cagr: 15, stepUp: 10 },
 };
+
+export interface SWPInputs {
+  corpus: number;          // Starting corpus (₹)
+  monthlyWithdrawal: number; // Fixed monthly withdrawal (₹)
+  cagr: number;            // Expected annual return (%)
+  inflation: number;       // Inflation rate (%)
+  years: number;           // How many years to project
+}
+
+export interface SWPYearlyData {
+  year: number;
+  monthlyWithdrawal: number;       // withdrawal at start of this year (inflation-stepped)
+  annualWithdrawn: number;         // total withdrawn in this year
+  totalWithdrawn: number;          // cumulative total withdrawn
+  corpusStart: number;             // corpus at start of year
+  corpusEnd: number;               // corpus at end of year
+  growthEarned: number;            // investment growth earned this year
+  corpusExhausted: boolean;        // true if corpus ran out this year
+}
+
+export interface SWPResults {
+  initialCorpus: number;
+  totalWithdrawn: number;
+  finalCorpus: number;
+  corpusLastsYears: number | null; // null = lasts beyond projection period
+  corpusLastsMonths: number | null;
+  yearlyData: SWPYearlyData[];
+}
+
+export const DEFAULT_SWP_INPUTS: SWPInputs = {
+  corpus: 10000000,      // ₹1 Cr default
+  monthlyWithdrawal: 50000,
+  cagr: 10,
+  inflation: 6,
+  years: 20,
+};

@@ -12,6 +12,7 @@ import ResultsTable from '@/components/ResultsTable';
 import AssumptionsPanel from '@/components/AssumptionsPanel';
 import WhatIfComparison from '@/components/WhatIfComparison';
 import Logo from '@/components/Logo';
+import SWPCalculator from '@/components/SWPCalculator';
 
 const GrowthChart = dynamic(() => import('@/components/GrowthChart'), { ssr: false });
 
@@ -32,7 +33,7 @@ export default function Home() {
   const [copied, setCopied] = useState(false);
   const [showComparison, setShowComparison] = useState(false);
   const [activeView, setActiveView] = useState<'annual' | 'monthly'>('annual');
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'table' | 'whatif' | 'assumptions'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'table' | 'swp' | 'whatif' | 'assumptions'>('dashboard');
 
   useEffect(() => {
     fetchFXRates().then(rates => {
@@ -160,6 +161,18 @@ export default function Home() {
                     ⚖️ What-If
                   </button>
                   <button
+                    onClick={() => setActiveTab('swp')}
+                    className={`px-4 py-2 font-medium transition-all border-b-2 ${activeTab === 'swp' ? 'border-[#21808D] text-[#21808D]' : 'border-transparent text-gray-600 hover:text-gray-900'}`}
+                  >
+                    💸 SWP
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('whatif')}
+                    className={`px-4 py-2 font-medium transition-all border-b-2 ${activeTab === 'whatif' ? 'border-[#21808D] text-[#21808D]' : 'border-transparent text-gray-600 hover:text-gray-900'}`}
+                  >
+                    ⚖️ What-If
+                  </button>
+                  <button
                     onClick={() => setActiveTab('assumptions')}
                     className={`px-4 py-2 font-medium transition-all border-b-2 ${activeTab === 'assumptions' ? 'border-[#21808D] text-[#21808D]' : 'border-transparent text-gray-600 hover:text-gray-900'}`}
                   >
@@ -195,6 +208,11 @@ export default function Home() {
                       </div>
                       <ResultsTable yearlyData={results.yearlyData} monthlyData={results.monthlyData} view={activeView} />
                     </div>
+                  )}
+
+                  {/* SWP Tab */}
+                  {activeTab === 'swp' && (
+                    <SWPCalculator suggestedCorpus={results.estimatedCorpus} />
                   )}
 
                   {/* What-If Tab */}

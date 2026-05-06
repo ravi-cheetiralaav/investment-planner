@@ -42,8 +42,8 @@ export default function SummaryCards({ results, inputs, fxRates }: Props) {
       <Card
         label="Estimated Corpus"
         value={formatINRCompact(estimatedCorpus)}
-        accent="bg-gradient-to-br from-teal-100 to-cyan-50 border-teal-300"
-        labelTone="text-teal-700"
+        accent="bg-gradient-to-br from-orange-100 to-amber-50 border-orange-300"
+        labelTone="text-orange-600"
       />
       <Card
         label="Wealth Gained"

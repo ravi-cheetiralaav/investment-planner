@@ -19,7 +19,7 @@ interface CardProps {
 
 function Card({ label, value, sub, accent = 'bg-white', labelTone = 'text-slate-500' }: CardProps) {
   return (
-    <div className={`${accent} rounded-2xl p-4 border border-slate-200/70 shadow-sm hover:shadow-md transition-shadow`}>
+    <div className={`${accent} rounded-2xl p-4 border shadow-sm hover:shadow-md transition-shadow`}>
       <p className={`text-[11px] font-semibold uppercase tracking-[0.08em] mb-1.5 ${labelTone}`}>{label}</p>
       <p className="text-2xl font-bold text-slate-900 leading-tight">{value}</p>
       {sub && <p className="text-xs text-slate-500 mt-1.5">{sub}</p>}
@@ -36,26 +36,27 @@ export default function SummaryCards({ results, inputs, fxRates }: Props) {
       <Card
         label="Total Invested"
         value={formatINRCompact(totalInvested)}
-        accent="bg-gradient-to-br from-white to-slate-50"
+        accent="bg-gradient-to-br from-slate-100 to-slate-50 border-slate-300"
+        labelTone="text-slate-600"
       />
       <Card
         label="Estimated Corpus"
         value={formatINRCompact(estimatedCorpus)}
-        accent="bg-gradient-to-br from-cyan-50 to-teal-50"
-        labelTone="text-[#21808D]"
+        accent="bg-gradient-to-br from-teal-100 to-cyan-50 border-teal-300"
+        labelTone="text-teal-700"
       />
       <Card
         label="Wealth Gained"
         value={formatINRCompact(wealthGained)}
         sub={`+${gains}% over investment`}
-        accent="bg-gradient-to-br from-emerald-50 to-green-50"
+        accent="bg-gradient-to-br from-emerald-100 to-green-50 border-emerald-300"
         labelTone="text-emerald-700"
       />
       <Card
         label="Inflation-Adjusted"
         value={formatINRCompact(inflationAdjustedCorpus)}
         sub={`Real value in today's money at ${inputs.inflation}% inflation`}
-        accent="bg-gradient-to-br from-amber-50 to-yellow-50"
+        accent="bg-gradient-to-br from-amber-100 to-yellow-50 border-amber-300"
         labelTone="text-amber-700"
       />
       {fxRates && (
@@ -64,15 +65,16 @@ export default function SummaryCards({ results, inputs, fxRates }: Props) {
             label="Current Monthly SIP"
             value={formatINRCompact(effectiveFirstYearSIP)}
             sub={`≈ ${formatCurrency(effectiveFirstYearSIP * fxRates.USD, 'USD')} · ${formatCurrency(effectiveFirstYearSIP * fxRates.AUD, 'AUD')}`}
-            accent="bg-gradient-to-br from-slate-50 to-white"
+            accent="bg-gradient-to-br from-slate-100 to-white border-slate-300"
+            labelTone="text-slate-600"
           />
           {inputs.stepUp > 0 && (
             <Card
               label={`Final Year SIP (Year ${inputs.years})`}
               value={formatINRCompact(finalYearSIP)}
               sub={`After ${inputs.stepUp}% annual step-up`}
-              accent="bg-gradient-to-br from-teal-50 to-cyan-50"
-              labelTone="text-[#21808D]"
+              accent="bg-gradient-to-br from-teal-100 to-cyan-50 border-teal-300"
+              labelTone="text-teal-700"
             />
           )}
         </>

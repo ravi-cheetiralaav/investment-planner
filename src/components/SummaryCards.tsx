@@ -56,8 +56,8 @@ export default function SummaryCards({ results, inputs, fxRates }: Props) {
         label="Inflation-Adjusted"
         value={formatINRCompact(inflationAdjustedCorpus)}
         sub={`Real value in today's money at ${inputs.inflation}% inflation`}
-        accent="bg-gradient-to-br from-amber-100 to-yellow-50 border-amber-300"
-        labelTone="text-amber-700"
+        accent="bg-gradient-to-br from-violet-100 to-purple-50 border-violet-300"
+        labelTone="text-violet-700"
       />
       {fxRates && (
         <>

@@ -15,6 +15,8 @@ import {
   PieChart,
   Pie,
   Cell,
+  ReferenceLine,
+  ReferenceDot,
 } from 'recharts';
 import { formatINRCompact } from '@/lib/formatting';
 
@@ -32,6 +34,7 @@ export default function GrowthChart({ yearlyData }: Props) {
   const lastYear = yearlyData[yearlyData.length - 1];
   const totalInvested = lastYear?.totalInvested ?? 0;
   const totalGains = lastYear?.wealthGained ?? 0;
+  const crossoverPoint = yearlyData.find((row) => row.wealthGained >= row.totalInvested);
   const pieData = [
     { name: 'Principal', value: totalInvested },
     { name: 'Gains', value: totalGains },
@@ -40,7 +43,12 @@ export default function GrowthChart({ yearlyData }: Props) {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-8">
       <div>
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Corpus Growth Over Time</h3>
+        <h3 className="text-lg font-semibold text-gray-800 mb-2">Corpus Growth Over Time</h3>
+        {crossoverPoint && (
+          <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-fuchsia-200 bg-fuchsia-50 px-3 py-1 text-xs font-semibold text-fuchsia-700">
+            Crossover at Year {crossoverPoint.year}: gains ({formatINRCompact(crossoverPoint.wealthGained)}) exceed invested ({formatINRCompact(crossoverPoint.totalInvested)})
+          </p>
+        )}
         <ResponsiveContainer width="100%" height={280}>
           <LineChart data={yearlyData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -52,7 +60,25 @@ export default function GrowthChart({ yearlyData }: Props) {
               contentStyle={{ borderRadius: '8px', fontSize: '12px' }}
             />
             <Legend wrapperStyle={{ fontSize: '12px' }} />
-            <Line type="monotone" dataKey="portfolioValue" name="Portfolio Value" stroke="#3b82f6" strokeWidth={2.5} dot={false} />
+            {crossoverPoint && (
+              <>
+                <ReferenceLine
+                  x={crossoverPoint.year}
+                  stroke="#d946ef"
+                  strokeDasharray="4 4"
+                  label={{ value: 'Crossover', position: 'insideTopRight', fill: '#a21caf', fontSize: 11 }}
+                />
+                <ReferenceDot
+                  x={crossoverPoint.year}
+                  y={crossoverPoint.portfolioValue}
+                  r={6}
+                  fill="#d946ef"
+                  stroke="#ffffff"
+                  strokeWidth={2}
+                />
+              </>
+            )}
+            <Line type="monotone" dataKey="portfolioValue" name="Portfolio Value" stroke="#21808D" strokeWidth={2.5} dot={false} />
             <Line type="monotone" dataKey="totalInvested" name="Total Invested" stroke="#94a3b8" strokeWidth={2} dot={false} strokeDasharray="5 5" />
             <Line type="monotone" dataKey="inflationAdjustedValue" name="Real Value" stroke="#f59e0b" strokeWidth={2} dot={false} />
           </LineChart>
@@ -73,8 +99,12 @@ export default function GrowthChart({ yearlyData }: Props) {
                 contentStyle={{ borderRadius: '8px', fontSize: '12px' }}
               />
               <Legend wrapperStyle={{ fontSize: '12px' }} />
-              <Bar dataKey="totalInvested" name="Total Invested" fill="#cbd5e1" radius={[2,2,0,0]} />
-              <Bar dataKey="portfolioValue" name="Portfolio Value" fill="#3b82f6" radius={[2,2,0,0]} />
+              <Bar dataKey="totalInvested" name="Total Invested" fill="#cbd5e1" radius={[2, 2, 0, 0]} />
+              <Bar dataKey="portfolioValue" name="Portfolio Value" fill="#21808D" radius={[2,2,0,0]}>
+                {yearlyData.map((row) => (
+                  <Cell key={`bar-${row.year}`} fill={crossoverPoint?.year === row.year ? '#d946ef' : '#3b82f6'} />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -86,7 +116,7 @@ export default function GrowthChart({ yearlyData }: Props) {
               <PieChart>
                 <Pie data={pieData} cx="50%" cy="50%" innerRadius={50} outerRadius={75} paddingAngle={3} dataKey="value">
                   <Cell fill="#cbd5e1" />
-                  <Cell fill="#3b82f6" />
+                  <Cell fill="#21808D" />
                 </Pie>
                 <Tooltip formatter={(v) => formatINRCompact(Number(v))} contentStyle={{ borderRadius: '8px', fontSize: '12px' }} />
               </PieChart>

@@ -3,7 +3,7 @@ import { FXRates } from './types';
 const FX_CACHE_KEY = 'sip_fx_rates';
 
 // 1st: fxratesapi.com — EUR base is free (no key needed); compute INR cross-rates
-const FXRATES_URL = 'https://api.fxratesapi.com/latest?currencies=INR,USD,AUD';
+const FXRATES_URL = 'https://api.fxratesapi.com/latest?currencies=INR,USD,AUD,EUR';
 // 2nd: open.er-api.com — free, no key, CORS-friendly, INR base
 const ER_API_URL = 'https://open.er-api.com/v6/latest/INR';
 // 3rd: fawazahmed0/currency-api on jsDelivr CDN — always free, no key
@@ -15,6 +15,7 @@ const JSDELIVR_URL =
 const FALLBACK_RATES: FXRates = {
   USD: 0.01193, // ~₹1 ≈ $0.012 (approx mid-2025)
   AUD: 0.0186,  // ~₹1 ≈ A$0.019 (approx mid-2025)
+  EUR: 0.01098, // ~₹1 ≈ €0.011 (approx mid-2025)
   updatedAt: 'approx (offline)',
   source: 'fallback',
 };
@@ -32,6 +33,7 @@ async function tryFxRatesApi(): Promise<FXRates | null> {
     return {
       USD: usdPerEur / inrPerEur,   // USD per 1 INR
       AUD: audPerEur / inrPerEur,   // AUD per 1 INR
+      EUR: 1 / inrPerEur,           // EUR per 1 INR (EUR is base)
       updatedAt: new Date().toLocaleString('en-IN'),
       source: 'live',
     };
@@ -49,6 +51,7 @@ async function tryErApi(): Promise<FXRates | null> {
     return {
       USD: data.rates.USD,
       AUD: data.rates.AUD,
+      EUR: data.rates.EUR ?? FALLBACK_RATES.EUR,
       updatedAt: new Date().toLocaleString('en-IN'),
       source: 'live',
     };
@@ -68,6 +71,7 @@ async function tryJsDelivr(): Promise<FXRates | null> {
     return {
       USD: inr.usd,
       AUD: inr.aud,
+      EUR: inr.eur ?? FALLBACK_RATES.EUR,
       updatedAt: new Date().toLocaleString('en-IN'),
       source: 'fallback',
     };
@@ -110,7 +114,7 @@ export async function fetchFXRates(): Promise<FXRates | null> {
     if (cached) {
       try {
         const parsed = JSON.parse(cached) as FXRates;
-        return { ...parsed, source: 'cached' };
+        return { ...FALLBACK_RATES, ...parsed, EUR: parsed.EUR ?? FALLBACK_RATES.EUR, source: 'cached' };
       } catch {
         // ignore corrupt cache
       }

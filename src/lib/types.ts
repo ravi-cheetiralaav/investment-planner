@@ -16,6 +16,17 @@ export interface YearlyData {
   inflationAdjustedValue: number;
 }
 
+export interface MonthlyData {
+  month: number;
+  year: number;
+  monthInYear: number;
+  monthlySIP: number;
+  totalInvested: number;
+  portfolioValue: number;
+  wealthGained: number;
+  inflationAdjustedValue: number;
+}
+
 export interface SIPResults {
   totalInvested: number;
   estimatedCorpus: number;
@@ -24,6 +35,7 @@ export interface SIPResults {
   effectiveFirstYearSIP: number;
   finalYearSIP: number;
   yearlyData: YearlyData[];
+  monthlyData: MonthlyData[];
 }
 
 export interface FXRates {

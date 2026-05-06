@@ -1,4 +1,4 @@
-import { SIPInputs, SIPResults, YearlyData } from './types';
+import { SIPInputs, SIPResults, YearlyData, MonthlyData } from './types';
 
 export function calculateSIP(inputs: SIPInputs): SIPResults {
   const { years, inflation, monthlyInvestment, stepUp, cagr } = inputs;
@@ -9,16 +9,34 @@ export function calculateSIP(inputs: SIPInputs): SIPResults {
   let portfolioValue = 0;
   let currentMonthlySIP = monthlyInvestment;
   const yearlyData: YearlyData[] = [];
+  const monthlyData: MonthlyData[] = [];
+  let monthCounter = 0;
 
   for (let year = 1; year <= years; year++) {
     if (year > 1) {
       currentMonthlySIP = currentMonthlySIP * (1 + stepUp / 100);
     }
     const annualInvested = currentMonthlySIP * 12;
-    totalInvested += annualInvested;
 
     for (let month = 1; month <= 12; month++) {
+      monthCounter += 1;
+      totalInvested += currentMonthlySIP;
       portfolioValue = portfolioValue * (1 + monthlyRate) + currentMonthlySIP;
+
+      const elapsedYears = monthCounter / 12;
+      const monthlyWealthGained = portfolioValue - totalInvested;
+      const monthlyInflationAdjustedValue = portfolioValue / Math.pow(1 + inflation / 100, elapsedYears);
+
+      monthlyData.push({
+        month: monthCounter,
+        year,
+        monthInYear: month,
+        monthlySIP: currentMonthlySIP,
+        totalInvested,
+        portfolioValue,
+        wealthGained: monthlyWealthGained,
+        inflationAdjustedValue: monthlyInflationAdjustedValue,
+      });
     }
 
     const wealthGained = portfolioValue - totalInvested;
@@ -45,5 +63,6 @@ export function calculateSIP(inputs: SIPInputs): SIPResults {
     effectiveFirstYearSIP: monthlyInvestment,
     finalYearSIP: currentMonthlySIP,
     yearlyData,
+    monthlyData,
   };
 }

@@ -11,6 +11,7 @@ import SummaryCards from '@/components/SummaryCards';
 import ResultsTable from '@/components/ResultsTable';
 import AssumptionsPanel from '@/components/AssumptionsPanel';
 import WhatIfComparison from '@/components/WhatIfComparison';
+import Logo from '@/components/Logo';
 
 const GrowthChart = dynamic(() => import('@/components/GrowthChart'), { ssr: false });
 
@@ -31,6 +32,7 @@ export default function Home() {
   const [copied, setCopied] = useState(false);
   const [showComparison, setShowComparison] = useState(false);
   const [activeView, setActiveView] = useState<'annual' | 'monthly'>('annual');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'table' | 'whatif' | 'assumptions'>('dashboard');
 
   useEffect(() => {
     fetchFXRates().then(rates => {
@@ -99,9 +101,9 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        <div className="text-center mb-10">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">SIP Growth Calculator</h1>
-          <p className="text-gray-500 text-lg">Plan your wealth creation with Systematic Investment Plans</p>
+        <div className="mb-10">
+          <Logo />
+          <p className="text-gray-500 text-lg mt-2">Plan your wealth creation with Systematic Investment Plans</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -117,55 +119,104 @@ export default function Home() {
             />
           </div>
 
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2">
             {results ? (
               <>
                 <SummaryCards results={results} inputs={inputs} fxRates={fxRates} />
                 
-                <div className="flex flex-wrap gap-3 no-print">
-                  <button onClick={handleShare} className="btn-secondary">
-                    {copied ? '✓ Copied!' : '🔗 Share'}
+                <div className="flex flex-wrap gap-2 mb-8 no-print">
+                  <button onClick={handleShare} className="btn-secondary" title="Share this calculation">
+                    <span>🔗</span>
+                    <span>{copied ? '✓ Copied!' : 'Share'}</span>
                   </button>
-                  <button onClick={handleDownloadCSV} className="btn-secondary">
-                    📥 Download CSV
+                  <button onClick={handleDownloadCSV} className="btn-secondary" title="Download as CSV">
+                    <span>📥</span>
+                    <span>Download CSV</span>
                   </button>
-                  <button onClick={handlePrint} className="btn-secondary">
-                    🖨️ Print
-                  </button>
-                  <button onClick={() => setShowComparison(v => !v)} className="btn-secondary">
-                    ⚖️ What-if Comparison
+                  <button onClick={handlePrint} className="btn-secondary" title="Print this page">
+                    <span>🖨️</span>
+                    <span>Print</span>
                   </button>
                 </div>
 
-                {showComparison && (
-                  <WhatIfComparison baseInputs={inputs} />
-                )}
-                
-                <GrowthChart yearlyData={results.yearlyData} />
-                
-                <div className="flex gap-2 mb-2">
+                {/* Tab Navigation */}
+                <div className="flex gap-2 mb-6 border-b border-gray-200 no-print flex-wrap">
                   <button
-                    onClick={() => setActiveView('annual')}
-                    className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${activeView === 'annual' ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 border border-gray-200'}`}
+                    onClick={() => setActiveTab('dashboard')}
+                    className={`px-4 py-2 font-medium transition-all border-b-2 ${activeTab === 'dashboard' ? 'border-[#21808D] text-[#21808D]' : 'border-transparent text-gray-600 hover:text-gray-900'}`}
                   >
-                    Annual View
+                    📊 Dashboard
                   </button>
                   <button
-                    onClick={() => setActiveView('monthly')}
-                    className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${activeView === 'monthly' ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 border border-gray-200'}`}
+                    onClick={() => setActiveTab('table')}
+                    className={`px-4 py-2 font-medium transition-all border-b-2 ${activeTab === 'table' ? 'border-[#21808D] text-[#21808D]' : 'border-transparent text-gray-600 hover:text-gray-900'}`}
                   >
-                    Monthly View
+                    📋 Data Table
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('whatif')}
+                    className={`px-4 py-2 font-medium transition-all border-b-2 ${activeTab === 'whatif' ? 'border-[#21808D] text-[#21808D]' : 'border-transparent text-gray-600 hover:text-gray-900'}`}
+                  >
+                    ⚖️ What-If
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('assumptions')}
+                    className={`px-4 py-2 font-medium transition-all border-b-2 ${activeTab === 'assumptions' ? 'border-[#21808D] text-[#21808D]' : 'border-transparent text-gray-600 hover:text-gray-900'}`}
+                  >
+                    ⚙️ Assumptions
                   </button>
                 </div>
-                
-                <ResultsTable yearlyData={results.yearlyData} view={activeView} />
-                <AssumptionsPanel inputs={inputs} />
+
+                {/* Tab Content */}
+                <div className="no-print">
+                  {/* Dashboard Tab */}
+                  {activeTab === 'dashboard' && (
+                    <div className="space-y-6">
+                      <GrowthChart yearlyData={results.yearlyData} />
+                    </div>
+                  )}
+
+                  {/* Data Table Tab */}
+                  {activeTab === 'table' && (
+                    <div className="space-y-4">
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => setActiveView('annual')}
+                          className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${activeView === 'annual' ? 'bg-[#21808D] text-white' : 'bg-white text-gray-600 border border-gray-200'}`}
+                        >
+                          Annual View
+                        </button>
+                        <button
+                          onClick={() => setActiveView('monthly')}
+                          className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${activeView === 'monthly' ? 'bg-[#21808D] text-white' : 'bg-white text-gray-600 border border-gray-200'}`}
+                        >
+                          Monthly View
+                        </button>
+                      </div>
+                      <ResultsTable yearlyData={results.yearlyData} monthlyData={results.monthlyData} view={activeView} />
+                    </div>
+                  )}
+
+                  {/* What-If Tab */}
+                  {activeTab === 'whatif' && (
+                    <div className="space-y-4">
+                      <WhatIfComparison baseInputs={inputs} />
+                    </div>
+                  )}
+
+                  {/* Assumptions Tab */}
+                  {activeTab === 'assumptions' && (
+                    <div className="space-y-4">
+                      <AssumptionsPanel inputs={inputs} />
+                    </div>
+                  )}
+                </div>
               </>
             ) : (
               <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-center">
                 <div className="text-6xl mb-6">📈</div>
                 <h2 className="text-2xl font-semibold text-gray-700 mb-3">Ready to calculate your wealth?</h2>
-                <p className="text-gray-400 max-w-md">Fill in your investment details and click <span className="font-medium text-blue-600">Calculate SIP Growth</span> to see your projected returns.</p>
+                <p className="text-gray-400 max-w-md">Fill in your investment details and click <span className="font-medium text-[#21808D]">Calculate SIP Growth</span> to see your projected returns.</p>
               </div>
             )}
           </div>

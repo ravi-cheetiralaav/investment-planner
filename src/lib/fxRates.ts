@@ -2,10 +2,12 @@ import { FXRates } from './types';
 
 const FX_CACHE_KEY = 'sip_fx_rates';
 
-// Primary: open.er-api.com — free, no key, CORS-friendly
-const PRIMARY_URL = 'https://open.er-api.com/v6/latest/INR';
-// Secondary: fawazahmed0/currency-api on jsDelivr CDN — always free, no key
-const SECONDARY_URL =
+// 1st: fxratesapi.com — EUR base is free (no key needed); compute INR cross-rates
+const FXRATES_URL = 'https://api.fxratesapi.com/latest?currencies=INR,USD,AUD';
+// 2nd: open.er-api.com — free, no key, CORS-friendly, INR base
+const ER_API_URL = 'https://open.er-api.com/v6/latest/INR';
+// 3rd: fawazahmed0/currency-api on jsDelivr CDN — always free, no key
+const JSDELIVR_URL =
   'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/inr.json';
 
 // Approximate fallback rates (updated periodically). Used only when all live APIs and
@@ -17,9 +19,30 @@ const FALLBACK_RATES: FXRates = {
   source: 'fallback',
 };
 
-async function tryPrimary(): Promise<FXRates | null> {
+async function tryFxRatesApi(): Promise<FXRates | null> {
   try {
-    const res = await fetch(PRIMARY_URL, { cache: 'no-store' });
+    const res = await fetch(FXRATES_URL, { cache: 'no-store' });
+    if (!res.ok) return null;
+    const data = await res.json();
+    // Response is EUR-based: { rates: { INR: 90.x, USD: 1.0x, AUD: 1.6x } }
+    const inrPerEur = data?.rates?.INR;
+    const usdPerEur = data?.rates?.USD;
+    const audPerEur = data?.rates?.AUD;
+    if (!inrPerEur || !usdPerEur || !audPerEur) return null;
+    return {
+      USD: usdPerEur / inrPerEur,   // USD per 1 INR
+      AUD: audPerEur / inrPerEur,   // AUD per 1 INR
+      updatedAt: new Date().toLocaleString('en-IN'),
+      source: 'live',
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function tryErApi(): Promise<FXRates | null> {
+  try {
+    const res = await fetch(ER_API_URL, { cache: 'no-store' });
     if (!res.ok) return null;
     const data = await res.json();
     if (!data?.rates?.USD || !data?.rates?.AUD) return null;
@@ -34,9 +57,9 @@ async function tryPrimary(): Promise<FXRates | null> {
   }
 }
 
-async function trySecondary(): Promise<FXRates | null> {
+async function tryJsDelivr(): Promise<FXRates | null> {
   try {
-    const res = await fetch(SECONDARY_URL, { cache: 'no-store' });
+    const res = await fetch(JSDELIVR_URL, { cache: 'no-store' });
     if (!res.ok) return null;
     const data = await res.json();
     // Response shape: { inr: { usd: 0.012, aud: 0.019, ... } }
@@ -54,25 +77,34 @@ async function trySecondary(): Promise<FXRates | null> {
 }
 
 export async function fetchFXRates(): Promise<FXRates | null> {
-  // 1. Try primary API
-  const primary = await tryPrimary();
-  if (primary) {
+  // 1. Try fxratesapi.com (EUR base, free — compute INR cross-rates)
+  const fxrates = await tryFxRatesApi();
+  if (fxrates) {
     if (typeof window !== 'undefined') {
-      localStorage.setItem(FX_CACHE_KEY, JSON.stringify(primary));
+      localStorage.setItem(FX_CACHE_KEY, JSON.stringify(fxrates));
     }
-    return primary;
+    return fxrates;
   }
 
-  // 2. Try secondary API
-  const secondary = await trySecondary();
-  if (secondary) {
+  // 2. Try open.er-api.com (INR base, free)
+  const erapi = await tryErApi();
+  if (erapi) {
     if (typeof window !== 'undefined') {
-      localStorage.setItem(FX_CACHE_KEY, JSON.stringify(secondary));
+      localStorage.setItem(FX_CACHE_KEY, JSON.stringify(erapi));
     }
-    return secondary;
+    return erapi;
   }
 
-  // 3. Fall back to localStorage cache
+  // 3. Try jsDelivr CDN mirror
+  const jsdelivr = await tryJsDelivr();
+  if (jsdelivr) {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(FX_CACHE_KEY, JSON.stringify(jsdelivr));
+    }
+    return jsdelivr;
+  }
+
+  // 4. Fall back to localStorage cache
   if (typeof window !== 'undefined') {
     const cached = localStorage.getItem(FX_CACHE_KEY);
     if (cached) {
@@ -85,7 +117,7 @@ export async function fetchFXRates(): Promise<FXRates | null> {
     }
   }
 
-  // 4. Last resort: hardcoded approximate rates
+  // 5. Last resort: hardcoded approximate rates
   return FALLBACK_RATES;
 }
 

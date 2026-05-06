@@ -11,7 +11,7 @@ export async function fetchFXRates(): Promise<FXRates | null> {
     const rates: FXRates = {
       USD: data.rates?.USD ?? 0,
       AUD: data.rates?.AUD ?? 0,
-      updatedAt: new Date().toLocaleTimeString('en-IN'),
+      updatedAt: new Date().toLocaleString('en-IN'),
     };
     if (typeof window !== 'undefined') {
       localStorage.setItem(FX_CACHE_KEY, JSON.stringify(rates));

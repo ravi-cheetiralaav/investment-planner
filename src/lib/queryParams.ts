@@ -13,8 +13,12 @@ export function encodeParams(inputs: SIPInputs): string {
 
 export function decodeParams(search: string): SIPInputs {
   const params = new URLSearchParams(search);
-  const get = (key: string, fallback: number) =>
-    params.has(key) ? (Number(params.get(key)) ?? fallback) : fallback;
+  const get = (key: string, fallback: number) => {
+    const raw = params.get(key);
+    if (raw === null) return fallback;
+    const val = Number(raw);
+    return isNaN(val) ? fallback : val;
+  };
   return {
     years: get('y', DEFAULT_INPUTS.years) || DEFAULT_INPUTS.years,
     inflation: get('i', DEFAULT_INPUTS.inflation),

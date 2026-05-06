@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@layer components {
+  .btn-secondary {
+    @apply px-4 py-2 bg-white border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-all;
+  }
+}
+
+@media print {
+  .no-print { display: none !important; }
+  body { background: white !important; }
+}

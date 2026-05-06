@@ -22,7 +22,21 @@ export default function Home() {
       const params = new URLSearchParams(window.location.search);
       if (params.toString()) return decodeParams(params.toString());
       const saved = localStorage.getItem('sip_last_inputs');
-      if (saved) { try { return JSON.parse(saved); } catch (e) { console.warn('Failed to parse saved inputs:', e); } }
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          // Ensure all numeric fields are actual numbers (guard against stale string values)
+          return {
+            ...DEFAULT_INPUTS,
+            ...parsed,
+            years: Number(parsed.years) || DEFAULT_INPUTS.years,
+            inflation: Number(parsed.inflation) ?? DEFAULT_INPUTS.inflation,
+            monthlyInvestment: Number(parsed.monthlyInvestment) || DEFAULT_INPUTS.monthlyInvestment,
+            stepUp: Number(parsed.stepUp) ?? DEFAULT_INPUTS.stepUp,
+            cagr: Number(parsed.cagr) || DEFAULT_INPUTS.cagr,
+          };
+        } catch (e) { console.warn('Failed to parse saved inputs:', e); }
+      }
     }
     return DEFAULT_INPUTS;
   });

@@ -20,9 +20,9 @@ export function decodeParams(search: string): SIPInputs {
     return isNaN(val) ? fallback : val;
   };
   return {
-    years: get('y', DEFAULT_INPUTS.years) || DEFAULT_INPUTS.years,
+    years: Math.round(get('y', DEFAULT_INPUTS.years)) || DEFAULT_INPUTS.years,
     inflation: get('i', DEFAULT_INPUTS.inflation),
-    monthlyInvestment: get('m', DEFAULT_INPUTS.monthlyInvestment) || DEFAULT_INPUTS.monthlyInvestment,
+    monthlyInvestment: Math.round(get('m', DEFAULT_INPUTS.monthlyInvestment)) || DEFAULT_INPUTS.monthlyInvestment,
     stepUp: get('s', DEFAULT_INPUTS.stepUp),
     cagr: get('c', DEFAULT_INPUTS.cagr) || DEFAULT_INPUTS.cagr,
   };

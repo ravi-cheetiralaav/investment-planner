@@ -79,10 +79,11 @@ export default function CalculatorForm({ inputs, onChange, onCalculate, onReset,
         <div className="flex flex-wrap gap-2">
           {ALLOWED_YEARS.map(y => (
             <button
+              type="button"
               key={y}
               onClick={() => update('years', y)}
               className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all border ${
-                inputs.years === y
+                Number(inputs.years) === y
                   ? 'bg-[#21808D] text-white border-[#21808D] shadow-sm'
                   : 'border-slate-200 text-slate-600 hover:border-[#21808D] hover:text-[#21808D] hover:bg-cyan-50'
               }`}

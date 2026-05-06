@@ -201,7 +201,7 @@ export default function SWPCalculator({ suggestedCorpus }: Props) {
                 <XAxis dataKey="year" tick={{ fontSize: 11 }} tickFormatter={v => `Yr ${v}`} />
                 <YAxis tickFormatter={formatY} tick={{ fontSize: 11 }} width={60} />
                 <ReTooltip
-                  formatter={(value: number, name: string) => [formatINRCompact(value), name]}
+                  formatter={(value) => [formatINRCompact(Number(value)), '']}
                   labelFormatter={l => `Year ${l}`}
                   contentStyle={{ fontSize: 12 }}
                 />

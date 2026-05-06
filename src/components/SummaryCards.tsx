@@ -68,6 +68,15 @@ export default function SummaryCards({ results, inputs, fxRates }: Props) {
             accent="bg-gradient-to-br from-slate-100 to-white border-slate-300"
             labelTone="text-slate-600"
           />
+          {inputs.lumpsum > 0 && (
+            <Card
+              label="Annual Lump Sum"
+              value={formatINRCompact(inputs.lumpsum)}
+              sub={`≈ ${formatCurrency(inputs.lumpsum * fxRates.USD, 'USD')} · ${formatCurrency(inputs.lumpsum * fxRates.AUD, 'AUD')} · ${formatCurrency(inputs.lumpsum * fxRates.EUR, 'EUR')}`}
+              accent="bg-gradient-to-br from-indigo-100 to-blue-50 border-indigo-300"
+              labelTone="text-indigo-700"
+            />
+          )}
           {inputs.stepUp > 0 && (
             <Card
               label={`Final Year SIP (Year ${inputs.years})`}

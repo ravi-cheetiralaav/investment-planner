@@ -7,6 +7,7 @@ export function encodeParams(inputs: SIPInputs): string {
     m: String(inputs.monthlyInvestment),
     s: String(inputs.stepUp),
     c: String(inputs.cagr),
+    l: String(inputs.lumpsum ?? 0),
   });
   return params.toString();
 }
@@ -25,5 +26,6 @@ export function decodeParams(search: string): SIPInputs {
     monthlyInvestment: Math.round(get('m', DEFAULT_INPUTS.monthlyInvestment)) || DEFAULT_INPUTS.monthlyInvestment,
     stepUp: get('s', DEFAULT_INPUTS.stepUp),
     cagr: get('c', DEFAULT_INPUTS.cagr) || DEFAULT_INPUTS.cagr,
+    lumpsum: Math.round(get('l', DEFAULT_INPUTS.lumpsum)),
   };
 }

@@ -34,6 +34,7 @@ export default function Home() {
             monthlyInvestment: Number(parsed.monthlyInvestment) || DEFAULT_INPUTS.monthlyInvestment,
             stepUp: Number(parsed.stepUp) ?? DEFAULT_INPUTS.stepUp,
             cagr: Number(parsed.cagr) || DEFAULT_INPUTS.cagr,
+            lumpsum: Number(parsed.lumpsum) ?? DEFAULT_INPUTS.lumpsum,
           };
         } catch (e) { console.warn('Failed to parse saved inputs:', e); }
       }

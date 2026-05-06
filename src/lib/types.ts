@@ -4,6 +4,7 @@ export interface SIPInputs {
   monthlyInvestment: number;
   stepUp: number;
   cagr: number;
+  lumpsum: number; // annual lump sum invested at start of each year (₹)
 }
 
 export interface YearlyData {
@@ -53,6 +54,7 @@ export const DEFAULT_INPUTS: SIPInputs = {
   monthlyInvestment: 25000,
   stepUp: 0,
   cagr: 12,
+  lumpsum: 0,
 };
 
 export const ALLOWED_YEARS = [3, 5, 10, 15, 20, 25, 30];

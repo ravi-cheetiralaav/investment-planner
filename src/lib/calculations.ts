@@ -1,7 +1,7 @@
 import { SIPInputs, SIPResults, YearlyData, MonthlyData, SWPInputs, SWPResults, SWPYearlyData } from './types';
 
 export function calculateSIP(inputs: SIPInputs): SIPResults {
-  const { years, inflation, monthlyInvestment, stepUp, cagr } = inputs;
+  const { years, inflation, monthlyInvestment, stepUp, cagr, lumpsum } = inputs;
   // Convert annual CAGR to equivalent monthly rate: (1 + annual_rate)^(1/12) - 1
   const monthlyRate = Math.pow(1 + cagr / 100, 1 / 12) - 1;
   
@@ -15,6 +15,11 @@ export function calculateSIP(inputs: SIPInputs): SIPResults {
   for (let year = 1; year <= years; year++) {
     if (year > 1) {
       currentMonthlySIP = currentMonthlySIP * (1 + stepUp / 100);
+    }
+    // Invest annual lump sum at start of each year
+    if (lumpsum > 0) {
+      totalInvested += lumpsum;
+      portfolioValue += lumpsum;
     }
     const annualInvested = currentMonthlySIP * 12;
 

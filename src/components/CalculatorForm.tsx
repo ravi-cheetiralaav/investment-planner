@@ -113,6 +113,34 @@ export default function CalculatorForm({ inputs, onChange, onCalculate, onReset,
         <CurrencyHint amount={inputs.monthlyInvestment} fxRates={fxRates} loading={fxLoading} error={fxError} />
       </div>
 
+      {/* Annual Lump Sum */}
+      <div>
+        <div className="flex items-center gap-1 mb-1">
+          <label className="text-sm font-medium text-slate-700">Annual Lump Sum (INR)</label>
+          <InfoTooltip text="An additional one-time amount invested at the start of each year, on top of your monthly SIP. Set to 0 to skip." />
+        </div>
+        <div className="relative">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-medium">₹</span>
+          <input
+            type="number"
+            value={inputs.lumpsum}
+            onChange={e => update('lumpsum', Number(e.target.value))}
+            min={0}
+            step={10000}
+            className="w-full pl-7 pr-4 py-2.5 border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#21808D]/50 focus:border-[#21808D]"
+          />
+        </div>
+        <CurrencyHint amount={inputs.lumpsum} fxRates={fxRates} loading={fxLoading} error={fxError} />
+        <div className="flex gap-1.5 mt-1.5 flex-wrap">
+          {[0, 50000, 100000, 500000].map(v => (
+            <button type="button" key={v} onClick={() => update('lumpsum', v)}
+              className={`px-2 py-0.5 rounded text-xs font-medium transition-all ${inputs.lumpsum === v ? 'bg-[#21808D] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
+              {v === 0 ? 'None' : v >= 100000 ? `₹${v/100000}L` : `₹${v/1000}K`}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* CAGR */}
       <div>
         <div className="flex items-center gap-1 mb-1">

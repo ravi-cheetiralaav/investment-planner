@@ -35,7 +35,7 @@ export default function Home() {
   useEffect(() => {
     fetchFXRates().then(rates => {
       setFxRates(rates);
-      setFxError(!rates);
+      setFxError(false); // fetchFXRates always returns rates (live, cached, or approximate fallback)
       setFxLoading(false);
     });
   }, []);

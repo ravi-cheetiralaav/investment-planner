@@ -30,6 +30,8 @@ export interface FXRates {
   USD: number;
   AUD: number;
   updatedAt: string;
+  /** 'live' = freshly fetched; 'cached' = from localStorage; 'fallback' = secondary API */
+  source?: 'live' | 'cached' | 'fallback';
 }
 
 export const DEFAULT_INPUTS: SIPInputs = {

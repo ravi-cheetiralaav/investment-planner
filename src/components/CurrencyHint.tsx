@@ -19,12 +19,19 @@ export default function CurrencyHint({ amount, fxRates, loading, error }: Props)
   }
   const usd = amount * fxRates.USD;
   const aud = amount * fxRates.AUD;
+  const isStale = fxRates.source === 'cached';
+  const isFallback = fxRates.source === 'fallback';
   return (
     <div className="mt-1.5">
       <p className="text-xs text-gray-500">
         ≈ {formatCurrency(usd, 'USD')} · {formatCurrency(aud, 'AUD')}
+        {(isStale || isFallback) && (
+          <span className="ml-1 text-amber-500" title={isStale ? 'Using cached rates' : 'Using secondary rate source'}>
+            {isStale ? '(cached)' : '(approx)'}
+          </span>
+        )}
       </p>
-      <p className="text-xs text-gray-400">Rates updated at {fxRates.updatedAt}</p>
+      <p className="text-xs text-gray-400">Rates updated {fxRates.updatedAt}</p>
     </div>
   );
 }

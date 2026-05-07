@@ -220,6 +220,63 @@ export default function LearnGuides() {
           </table>
         </div>
       </div>
+
+      {/* Portfolio Allocation Guide */}
+      <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 space-y-6">
+        <div className="space-y-2">
+          <h3 className="text-2xl font-bold text-slate-900">⚖️ Ideal Portfolio Allocation</h3>
+          <p className="text-slate-600">Core Portfolio vs Satellite Portfolio (General Rule of Thumb)</p>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm sm:text-base">
+            <thead>
+              <tr className="border-b-2 border-slate-200">
+                <th className="text-left py-3 px-3 font-semibold text-slate-900">Investor Type</th>
+                <th className="text-left py-3 px-3 font-semibold text-slate-900">Core (%)</th>
+                <th className="text-left py-3 px-3 font-semibold text-slate-900">Satellite (%)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="border-b border-slate-100">
+                <td className="py-3 px-3 font-medium text-slate-900">Conservative</td>
+                <td className="py-3 px-3 text-slate-700">80-90</td>
+                <td className="py-3 px-3 text-slate-700">10-20</td>
+              </tr>
+              <tr className="border-b border-slate-100">
+                <td className="py-3 px-3 font-medium text-slate-900">Moderate</td>
+                <td className="py-3 px-3 text-slate-700">70-80</td>
+                <td className="py-3 px-3 text-slate-700">20-30</td>
+              </tr>
+              <tr>
+                <td className="py-3 px-3 font-medium text-slate-900">Aggressive</td>
+                <td className="py-3 px-3 text-slate-700">60-70</td>
+                <td className="py-3 px-3 text-slate-700">30-40</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div className="bg-amber-50 border-l-4 border-amber-400 rounded-r-lg p-4">
+          <p className="text-amber-900 text-sm sm:text-base">
+            Very aggressive investors sometimes go as low as 50:50, but that is uncommon and usually needs active management.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="rounded-xl border border-sky-200 bg-gradient-to-br from-sky-50 to-cyan-50 p-5">
+            <p className="text-xs uppercase tracking-[0.08em] font-semibold text-sky-700 mb-2">Core vs Satellite</p>
+            <p className="text-3xl font-extrabold text-slate-900 leading-tight">70% vs 30%</p>
+            <p className="text-slate-700 mt-2 text-sm">A practical default split for many moderate investors.</p>
+          </div>
+
+          <div className="rounded-xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-teal-50 p-5">
+            <p className="text-xs uppercase tracking-[0.08em] font-semibold text-emerald-700 mb-2">Historical Pattern</p>
+            <p className="text-2xl font-extrabold text-slate-900 leading-tight">8 out of 10 years</p>
+            <p className="text-slate-700 mt-2 text-sm">On a rolling 10-year basis, mid-caps have often outperformed small-caps.</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

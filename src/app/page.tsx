@@ -49,7 +49,8 @@ export default function Home() {
   const [copied, setCopied] = useState(false);
   const [showComparison, setShowComparison] = useState(false);
   const [activeView, setActiveView] = useState<'annual' | 'monthly'>('annual');
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'table' | 'swp' | 'whatif' | 'assumptions' | 'learn'>('dashboard');
+  const [activeMenu, setActiveMenu] = useState<'calculator' | 'learn'>('calculator');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'table' | 'swp' | 'whatif' | 'assumptions'>('dashboard');
 
   useEffect(() => {
     fetchFXRates().then(rates => {
@@ -123,24 +124,59 @@ export default function Home() {
           <p className="text-gray-500 text-lg mt-2">Plan your wealth creation with Systematic Investment Plans</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-1">
-            <CalculatorForm
-              inputs={inputs}
-              onChange={setInputs}
-              onCalculate={handleCalculate}
-              onReset={handleReset}
-              fxRates={fxRates}
-              fxLoading={fxLoading}
-              fxError={fxError}
-            />
+        <div className="mb-8 no-print">
+          <div className="inline-flex rounded-xl border border-slate-200 bg-white p-1 shadow-sm">
+            <button
+              onClick={() => setActiveMenu('calculator')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeMenu === 'calculator' ? 'bg-[#21808D] text-white' : 'text-slate-600 hover:text-slate-900'}`}
+            >
+              🧮 Calculator
+            </button>
+            <button
+              onClick={() => setActiveMenu('learn')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeMenu === 'learn' ? 'bg-[#21808D] text-white' : 'text-slate-600 hover:text-slate-900'}`}
+            >
+              📚 Learn
+            </button>
           </div>
+        </div>
 
-          <div className="lg:col-span-2">
-            {/* Always visible tab navigation */}
-            <div className="flex gap-2 mb-6 border-b border-gray-200 no-print flex-wrap">
-              {results && (
+        {activeMenu === 'calculator' ? (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-1">
+              <CalculatorForm
+                inputs={inputs}
+                onChange={setInputs}
+                onCalculate={handleCalculate}
+                onReset={handleReset}
+                fxRates={fxRates}
+                fxLoading={fxLoading}
+                fxError={fxError}
+              />
+            </div>
+
+            <div className="lg:col-span-2">
+              {results ? (
                 <>
+                  <SummaryCards results={results} inputs={inputs} fxRates={fxRates} />
+                
+                <div className="flex flex-wrap gap-2 mb-8 no-print">
+                  <button onClick={handleShare} className="btn-secondary" title="Share this calculation">
+                    <span>🔗</span>
+                    <span>{copied ? '✓ Copied!' : 'Share'}</span>
+                  </button>
+                  <button onClick={handleDownloadCSV} className="btn-secondary" title="Download as CSV">
+                    <span>📥</span>
+                    <span>Download CSV</span>
+                  </button>
+                  <button onClick={handlePrint} className="btn-secondary" title="Print this page">
+                    <span>🖨️</span>
+                    <span>Print</span>
+                  </button>
+                </div>
+
+                {/* Tab Navigation */}
+                <div className="flex gap-2 mb-6 border-b border-gray-200 no-print flex-wrap">
                   <button
                     onClick={() => setActiveTab('dashboard')}
                     className={`px-4 py-2 font-medium transition-all border-b-2 ${activeTab === 'dashboard' ? 'border-[#21808D] text-[#21808D]' : 'border-transparent text-gray-600 hover:text-gray-900'}`}
@@ -171,46 +207,13 @@ export default function Home() {
                   >
                     ⚙️ Assumptions
                   </button>
-                </>
-              )}
-              <button
-                onClick={() => setActiveTab('learn')}
-                className={`px-4 py-2 font-medium transition-all border-b-2 ${activeTab === 'learn' ? 'border-[#21808D] text-[#21808D]' : 'border-transparent text-gray-600 hover:text-gray-900'}`}
-              >
-                📚 Learn
-              </button>
-            </div>
-
-            {/* Tab Content */}
-            <div className="no-print">
-              {/* Learn Tab - Always Available */}
-              {activeTab === 'learn' && (
-                <div className="space-y-4">
-                  <LearnGuides />
                 </div>
-              )}
 
-              {/* Results-dependent tabs */}
-              {results ? (
-                <>
+                {/* Tab Content */}
+                <div className="no-print">
                   {/* Dashboard Tab */}
                   {activeTab === 'dashboard' && (
                     <div className="space-y-6">
-                      <SummaryCards results={results} inputs={inputs} fxRates={fxRates} />
-                      <div className="flex flex-wrap gap-2 mb-8">
-                        <button onClick={handleShare} className="btn-secondary" title="Share this calculation">
-                          <span>🔗</span>
-                          <span>{copied ? '✓ Copied!' : 'Share'}</span>
-                        </button>
-                        <button onClick={handleDownloadCSV} className="btn-secondary" title="Download as CSV">
-                          <span>📥</span>
-                          <span>Download CSV</span>
-                        </button>
-                        <button onClick={handlePrint} className="btn-secondary" title="Print this page">
-                          <span>🖨️</span>
-                          <span>Print</span>
-                        </button>
-                      </div>
                       <GrowthChart yearlyData={results.yearlyData} />
                     </div>
                   )}
@@ -254,21 +257,20 @@ export default function Home() {
                       <AssumptionsPanel inputs={inputs} />
                     </div>
                   )}
-                </>
-              ) : (
-                <>
-                  {activeTab !== 'learn' && (
-                    <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-center">
-                      <div className="text-6xl mb-6">📈</div>
-                      <h2 className="text-2xl font-semibold text-gray-700 mb-3">Ready to calculate your wealth?</h2>
-                      <p className="text-gray-400 max-w-md">Fill in your investment details and click <span className="font-medium text-[#21808D]">Calculate SIP Growth</span> to see your projected returns.</p>
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
+                </div>
+              </>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-center">
+                <div className="text-6xl mb-6">📈</div>
+                <h2 className="text-2xl font-semibold text-gray-700 mb-3">Ready to calculate your wealth?</h2>
+                <p className="text-gray-400 max-w-md">Fill in your investment details and click <span className="font-medium text-[#21808D]">Calculate SIP Growth</span> to see your projected returns.</p>
+              </div>
+            )}
           </div>
-        </div>
+          </div>
+        ) : (
+          <LearnGuides />
+        )}
       </div>
     </main>
   );

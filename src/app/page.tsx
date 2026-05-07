@@ -13,6 +13,7 @@ import AssumptionsPanel from '@/components/AssumptionsPanel';
 import WhatIfComparison from '@/components/WhatIfComparison';
 import Logo from '@/components/Logo';
 import SWPCalculator from '@/components/SWPCalculator';
+import LearnGuides from '@/components/LearnGuides';
 
 const GrowthChart = dynamic(() => import('@/components/GrowthChart'), { ssr: false });
 
@@ -48,7 +49,7 @@ export default function Home() {
   const [copied, setCopied] = useState(false);
   const [showComparison, setShowComparison] = useState(false);
   const [activeView, setActiveView] = useState<'annual' | 'monthly'>('annual');
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'table' | 'swp' | 'whatif' | 'assumptions'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'table' | 'swp' | 'whatif' | 'assumptions' | 'learn'>('dashboard');
 
   useEffect(() => {
     fetchFXRates().then(rates => {
@@ -193,6 +194,12 @@ export default function Home() {
                   >
                     ⚙️ Assumptions
                   </button>
+                  <button
+                    onClick={() => setActiveTab('learn')}
+                    className={`px-4 py-2 font-medium transition-all border-b-2 ${activeTab === 'learn' ? 'border-[#21808D] text-[#21808D]' : 'border-transparent text-gray-600 hover:text-gray-900'}`}
+                  >
+                    📚 Learn
+                  </button>
                 </div>
 
                 {/* Tab Content */}
@@ -243,6 +250,13 @@ export default function Home() {
                       <AssumptionsPanel inputs={inputs} />
                     </div>
                   )}
+
+                  {/* Learn Tab */}
+                  {activeTab === 'learn' && (
+                    <div className="space-y-4">
+                      <LearnGuides />
+                    </div>
+                  )}
                 </div>
               </>
             ) : (
@@ -253,6 +267,11 @@ export default function Home() {
               </div>
             )}
           </div>
+        </div>
+
+        {/* Learn & Guides Section */}
+        <div className="mt-16">
+          <LearnGuides />
         </div>
       </div>
     </main>

@@ -106,6 +106,7 @@ function MetricCardComponent({ metric, isSelected, onClick }: { metric: MetricCa
 
 export default function LearnGuides() {
   const [selectedMetric, setSelectedMetric] = useState<string>('benchmark');
+  const [learnTab, setLearnTab] = useState<'metrics' | 'portfolio'>('metrics');
   const current = metrics.find((m) => m.id === selectedMetric) || metrics[0];
 
   return (
@@ -115,6 +116,27 @@ export default function LearnGuides() {
         <h2 className="text-3xl font-bold text-slate-900">📚 Learn Mutual Fund Metrics</h2>
         <p className="text-slate-600">Understand the key metrics that help you select the best mutual funds</p>
       </div>
+
+      {/* Learn Tabs */}
+      <div className="no-print">
+        <div className="inline-flex rounded-xl border border-slate-200 bg-white p-1 shadow-sm">
+          <button
+            onClick={() => setLearnTab('metrics')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${learnTab === 'metrics' ? 'bg-[#21808D] text-white' : 'text-slate-600 hover:text-slate-900'}`}
+          >
+            📊 Metrics
+          </button>
+          <button
+            onClick={() => setLearnTab('portfolio')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${learnTab === 'portfolio' ? 'bg-[#21808D] text-white' : 'text-slate-600 hover:text-slate-900'}`}
+          >
+            ⚖️ Ideal Portfolio
+          </button>
+        </div>
+      </div>
+
+      {learnTab === 'metrics' && (
+        <>
 
       {/* Metric Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -220,6 +242,11 @@ export default function LearnGuides() {
           </table>
         </div>
       </div>
+        </>
+      )}
+
+      {learnTab === 'portfolio' && (
+        <>
 
       {/* Portfolio Allocation Guide */}
       <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 space-y-6">
@@ -277,6 +304,8 @@ export default function LearnGuides() {
           </div>
         </div>
       </div>
+        </>
+      )}
     </div>
   );
 }

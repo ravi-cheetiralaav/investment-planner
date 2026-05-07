@@ -137,27 +137,10 @@ export default function Home() {
           </div>
 
           <div className="lg:col-span-2">
-            {results ? (
-              <>
-                <SummaryCards results={results} inputs={inputs} fxRates={fxRates} />
-                
-                <div className="flex flex-wrap gap-2 mb-8 no-print">
-                  <button onClick={handleShare} className="btn-secondary" title="Share this calculation">
-                    <span>🔗</span>
-                    <span>{copied ? '✓ Copied!' : 'Share'}</span>
-                  </button>
-                  <button onClick={handleDownloadCSV} className="btn-secondary" title="Download as CSV">
-                    <span>📥</span>
-                    <span>Download CSV</span>
-                  </button>
-                  <button onClick={handlePrint} className="btn-secondary" title="Print this page">
-                    <span>🖨️</span>
-                    <span>Print</span>
-                  </button>
-                </div>
-
-                {/* Tab Navigation */}
-                <div className="flex gap-2 mb-6 border-b border-gray-200 no-print flex-wrap">
+            {/* Always visible tab navigation */}
+            <div className="flex gap-2 mb-6 border-b border-gray-200 no-print flex-wrap">
+              {results && (
+                <>
                   <button
                     onClick={() => setActiveTab('dashboard')}
                     className={`px-4 py-2 font-medium transition-all border-b-2 ${activeTab === 'dashboard' ? 'border-[#21808D] text-[#21808D]' : 'border-transparent text-gray-600 hover:text-gray-900'}`}
@@ -183,30 +166,51 @@ export default function Home() {
                     💸 SWP
                   </button>
                   <button
-                    onClick={() => setActiveTab('whatif')}
-                    className={`px-4 py-2 font-medium transition-all border-b-2 ${activeTab === 'whatif' ? 'border-[#21808D] text-[#21808D]' : 'border-transparent text-gray-600 hover:text-gray-900'}`}
-                  >
-                    ⚖️ What-If
-                  </button>
-                  <button
                     onClick={() => setActiveTab('assumptions')}
                     className={`px-4 py-2 font-medium transition-all border-b-2 ${activeTab === 'assumptions' ? 'border-[#21808D] text-[#21808D]' : 'border-transparent text-gray-600 hover:text-gray-900'}`}
                   >
                     ⚙️ Assumptions
                   </button>
-                  <button
-                    onClick={() => setActiveTab('learn')}
-                    className={`px-4 py-2 font-medium transition-all border-b-2 ${activeTab === 'learn' ? 'border-[#21808D] text-[#21808D]' : 'border-transparent text-gray-600 hover:text-gray-900'}`}
-                  >
-                    📚 Learn
-                  </button>
-                </div>
+                </>
+              )}
+              <button
+                onClick={() => setActiveTab('learn')}
+                className={`px-4 py-2 font-medium transition-all border-b-2 ${activeTab === 'learn' ? 'border-[#21808D] text-[#21808D]' : 'border-transparent text-gray-600 hover:text-gray-900'}`}
+              >
+                📚 Learn
+              </button>
+            </div>
 
-                {/* Tab Content */}
-                <div className="no-print">
+            {/* Tab Content */}
+            <div className="no-print">
+              {/* Learn Tab - Always Available */}
+              {activeTab === 'learn' && (
+                <div className="space-y-4">
+                  <LearnGuides />
+                </div>
+              )}
+
+              {/* Results-dependent tabs */}
+              {results ? (
+                <>
                   {/* Dashboard Tab */}
                   {activeTab === 'dashboard' && (
                     <div className="space-y-6">
+                      <SummaryCards results={results} inputs={inputs} fxRates={fxRates} />
+                      <div className="flex flex-wrap gap-2 mb-8">
+                        <button onClick={handleShare} className="btn-secondary" title="Share this calculation">
+                          <span>🔗</span>
+                          <span>{copied ? '✓ Copied!' : 'Share'}</span>
+                        </button>
+                        <button onClick={handleDownloadCSV} className="btn-secondary" title="Download as CSV">
+                          <span>📥</span>
+                          <span>Download CSV</span>
+                        </button>
+                        <button onClick={handlePrint} className="btn-secondary" title="Print this page">
+                          <span>🖨️</span>
+                          <span>Print</span>
+                        </button>
+                      </div>
                       <GrowthChart yearlyData={results.yearlyData} />
                     </div>
                   )}
@@ -250,28 +254,20 @@ export default function Home() {
                       <AssumptionsPanel inputs={inputs} />
                     </div>
                   )}
-
-                  {/* Learn Tab */}
-                  {activeTab === 'learn' && (
-                    <div className="space-y-4">
-                      <LearnGuides />
+                </>
+              ) : (
+                <>
+                  {activeTab !== 'learn' && (
+                    <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-center">
+                      <div className="text-6xl mb-6">📈</div>
+                      <h2 className="text-2xl font-semibold text-gray-700 mb-3">Ready to calculate your wealth?</h2>
+                      <p className="text-gray-400 max-w-md">Fill in your investment details and click <span className="font-medium text-[#21808D]">Calculate SIP Growth</span> to see your projected returns.</p>
                     </div>
                   )}
-                </div>
-              </>
-            ) : (
-              <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-center">
-                <div className="text-6xl mb-6">📈</div>
-                <h2 className="text-2xl font-semibold text-gray-700 mb-3">Ready to calculate your wealth?</h2>
-                <p className="text-gray-400 max-w-md">Fill in your investment details and click <span className="font-medium text-[#21808D]">Calculate SIP Growth</span> to see your projected returns.</p>
-              </div>
-            )}
+                </>
+              )}
+            </div>
           </div>
-        </div>
-
-        {/* Learn & Guides Section */}
-        <div className="mt-16">
-          <LearnGuides />
         </div>
       </div>
     </main>

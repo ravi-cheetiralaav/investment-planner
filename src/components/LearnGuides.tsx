@@ -106,7 +106,7 @@ function MetricCardComponent({ metric, isSelected, onClick }: { metric: MetricCa
 
 export default function LearnGuides() {
   const [selectedMetric, setSelectedMetric] = useState<string>('benchmark');
-  const [learnTab, setLearnTab] = useState<'metrics' | 'portfolio'>('metrics');
+  const [learnTab, setLearnTab] = useState<'metrics' | 'portfolio' | 'basics' | 'scorecard'>('metrics');
   const current = metrics.find((m) => m.id === selectedMetric) || metrics[0];
 
   return (
@@ -131,6 +131,18 @@ export default function LearnGuides() {
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${learnTab === 'portfolio' ? 'bg-[#21808D] text-white' : 'text-slate-600 hover:text-slate-900'}`}
           >
             ⚖️ Ideal Portfolio
+          </button>
+          <button
+            onClick={() => setLearnTab('basics')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${learnTab === 'basics' ? 'bg-[#21808D] text-white' : 'text-slate-600 hover:text-slate-900'}`}
+          >
+            🧠 Fund Basics
+          </button>
+          <button
+            onClick={() => setLearnTab('scorecard')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${learnTab === 'scorecard' ? 'bg-[#21808D] text-white' : 'text-slate-600 hover:text-slate-900'}`}
+          >
+            🚦 Scorecard
           </button>
         </div>
       </div>
@@ -302,6 +314,179 @@ export default function LearnGuides() {
             <p className="text-2xl font-extrabold text-slate-900 leading-tight">8 out of 10 years</p>
             <p className="text-slate-700 mt-2 text-sm">On a rolling 10-year basis, mid-caps have often outperformed small-caps.</p>
           </div>
+        </div>
+      </div>
+        </>
+      )}
+
+      {learnTab === 'basics' && (
+        <>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 to-slate-50 p-5 shadow-sm">
+          <div className="flex items-start gap-3">
+            <span className="text-3xl">🔄</span>
+            <div>
+              <h3 className="text-lg font-bold text-slate-900">Rolling Returns</h3>
+              <p className="text-sm text-slate-600 mt-1">Shows how an investment performed over different overlapping periods.</p>
+            </div>
+          </div>
+          <div className="mt-4 space-y-3 text-sm text-slate-700">
+            <p><span className="font-semibold text-slate-900">Why it matters:</span> Helps you see consistency across market cycles, not just one point in time.</p>
+            <p><span className="font-semibold text-slate-900">Example:</span> If 3-year rolling returns stay around 12-13%, the fund has been stable and reliable.</p>
+            <p><span className="font-semibold text-slate-900">Interpretation:</span> More consistent rolling returns are better than a few lucky spikes.</p>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-sky-200 bg-gradient-to-br from-sky-50 to-cyan-50 p-5 shadow-sm">
+          <div className="flex items-start gap-3">
+            <span className="text-3xl">🏦</span>
+            <div>
+              <h3 className="text-lg font-bold text-slate-900">AUM</h3>
+              <p className="text-sm text-slate-600 mt-1">Assets Under Management is the total money managed by the fund.</p>
+            </div>
+          </div>
+          <div className="mt-4 space-y-3 text-sm text-slate-700">
+            <p><span className="font-semibold text-slate-900">Why it matters:</span> Gives you a sense of the fund’s size and investor trust.</p>
+            <p><span className="font-semibold text-slate-900">Example:</span> If a scheme manages ₹500 crore, that is its AUM.</p>
+            <p><span className="font-semibold text-slate-900">Interpretation:</span> Very low AUM may be risky for some strategies; very high AUM can sometimes limit flexibility.</p>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 p-5 shadow-sm">
+          <div className="flex items-start gap-3">
+            <span className="text-3xl">💸</span>
+            <div>
+              <h3 className="text-lg font-bold text-slate-900">Total Expense Ratio (TER)</h3>
+              <p className="text-sm text-slate-600 mt-1">The annual cost of investing in the fund, shown as a percentage.</p>
+            </div>
+          </div>
+          <div className="mt-4 space-y-3 text-sm text-slate-700">
+            <p><span className="font-semibold text-slate-900">Why it matters:</span> Lower TER means more of your returns stay with you.</p>
+            <p><span className="font-semibold text-slate-900">Example:</span> If TER is 1.5%, then ₹1,500 out of ₹1,00,000 goes toward yearly expenses.</p>
+            <p><span className="font-semibold text-slate-900">Interpretation:</span> Prefer lower TER when comparing similar funds.</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-slate-50 rounded-xl border border-slate-200 p-6 mt-4">
+        <h3 className="text-xl font-bold text-slate-900 mb-3">Quick Takeaway</h3>
+        <p className="text-slate-700 text-sm sm:text-base">
+          Use Rolling Returns to judge consistency, Sharpe Ratio to judge risk-adjusted returns, Beta and Standard Deviation to judge risk,
+          AUM to understand fund size, and TER to understand cost.
+        </p>
+      </div>
+        </>
+      )}
+
+      {learnTab === 'scorecard' && (
+        <>
+      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+        <div className="px-6 py-5 border-b border-slate-200 bg-slate-900 text-white">
+          <h3 className="text-2xl font-bold">Metrics Green Flag / Red Flag Scorecard</h3>
+          <p className="text-sm text-slate-300 mt-1">A quick way to judge whether a mutual fund is showing healthy signs or warning signs.</p>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm sm:text-base">
+            <thead>
+              <tr className="bg-amber-400/90 text-slate-900">
+                <th className="text-left py-3 px-4 font-bold">Metrics</th>
+                <th className="text-left py-3 px-4 font-bold">Green Flag</th>
+                <th className="text-left py-3 px-4 font-bold">Red Flag</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="bg-amber-100/70">
+                <td className="py-3 px-4 font-semibold text-slate-900" colSpan={3}>Performance Metrics</td>
+              </tr>
+              <tr className="border-t border-slate-200">
+                <td className="py-3 px-4 font-medium text-slate-900">Consistency in Rolling Returns (RR)</td>
+                <td className="py-3 px-4 text-slate-700">Positive over 3/5 years</td>
+                <td className="py-3 px-4 text-slate-700">Fails to achieve positive returns</td>
+              </tr>
+              <tr className="border-t border-slate-200">
+                <td className="py-3 px-4 font-medium text-slate-900">RR of selected MF to beat benchmark consistently</td>
+                <td className="py-3 px-4 text-slate-700">Regularly outperforms benchmark</td>
+                <td className="py-3 px-4 text-slate-700">Regularly underperforms benchmark</td>
+              </tr>
+              <tr className="border-t border-slate-200">
+                <td className="py-3 px-4 font-medium text-slate-900">RR of selected MF to beat category average</td>
+                <td className="py-3 px-4 text-slate-700">Regularly outperforms category average</td>
+                <td className="py-3 px-4 text-slate-700">Regularly underperforms category average</td>
+              </tr>
+              <tr className="border-t border-slate-200">
+                <td className="py-3 px-4 font-medium text-slate-900">Sharpe Ratio (SR)</td>
+                <td className="py-3 px-4 text-slate-700">Positive Sharpe ratio</td>
+                <td className="py-3 px-4 text-slate-700">Negative Sharpe ratio</td>
+              </tr>
+              <tr className="border-t border-slate-200">
+                <td className="py-3 px-4 font-medium text-slate-900">SR of selected MF to beat benchmark's SR</td>
+                <td className="py-3 px-4 text-slate-700">Sharpe ratio exceeds benchmark's Sharpe ratio</td>
+                <td className="py-3 px-4 text-slate-700">Sharpe ratio below benchmark's Sharpe ratio</td>
+              </tr>
+              <tr className="border-t border-slate-200">
+                <td className="py-3 px-4 font-medium text-slate-900">SR of selected MF to beat category average's SR</td>
+                <td className="py-3 px-4 text-slate-700">Sharpe ratio exceeds category average's Sharpe ratio</td>
+                <td className="py-3 px-4 text-slate-700">Sharpe ratio below category average's Sharpe ratio</td>
+              </tr>
+
+              <tr className="bg-amber-100/70">
+                <td className="py-3 px-4 font-semibold text-slate-900" colSpan={3}>Risk Metrics</td>
+              </tr>
+              <tr className="border-t border-slate-200">
+                <td className="py-3 px-4 font-medium text-slate-900">Standard Deviation</td>
+                <td className="py-3 px-4 text-slate-700">Lower values preferred</td>
+                <td className="py-3 px-4 text-slate-700">Higher values indicate more risk</td>
+              </tr>
+              <tr className="border-t border-slate-200">
+                <td className="py-3 px-4 font-medium text-slate-900">Beta</td>
+                <td className="py-3 px-4 text-slate-700">Preferably low for less volatility</td>
+                <td className="py-3 px-4 text-slate-700">High beta, indicating high volatility</td>
+              </tr>
+
+              <tr className="bg-amber-100/70">
+                <td className="py-3 px-4 font-semibold text-slate-900" colSpan={3}>Cost Metrics</td>
+              </tr>
+              <tr className="border-t border-slate-200">
+                <td className="py-3 px-4 font-medium text-slate-900">Asset Under Management (AUM)</td>
+                <td className="py-3 px-4 text-slate-700">Large AUM is not problematic for large cap funds</td>
+                <td className="py-3 px-4 text-slate-700">Large AUM may hinder performance in mid/small cap funds</td>
+              </tr>
+              <tr className="border-t border-slate-200">
+                <td className="py-3 px-4 font-medium text-slate-900">Portfolio Turnover</td>
+                <td className="py-3 px-4 text-slate-700">Lower turnover rate + consistent positive return</td>
+                <td className="py-3 px-4 text-slate-700">High turnover rate can indicate high costs</td>
+              </tr>
+              <tr className="border-t border-slate-200">
+                <td className="py-3 px-4 font-medium text-slate-900">Expense ratio</td>
+                <td className="py-3 px-4 text-slate-700">Lower expense ratio & consistent positive performance compared to other funds in the category</td>
+                <td className="py-3 px-4 text-slate-700">Higher expense ratio & inconsistent performance</td>
+              </tr>
+              <tr className="border-t border-slate-200">
+                <td className="py-3 px-4 font-medium text-slate-900">Exit load</td>
+                <td className="py-3 px-4 text-slate-700">No exit load or small exit load</td>
+                <td className="py-3 px-4 text-slate-700">High exit load, particularly for a long term</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-white p-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-emerald-700">Green Flag</p>
+          <p className="mt-2 text-slate-900 font-bold text-lg">Positive consistency</p>
+          <p className="mt-1 text-sm text-slate-600">Look for funds that repeatedly beat the benchmark and category average on a rolling basis.</p>
+        </div>
+        <div className="rounded-2xl border border-sky-200 bg-gradient-to-br from-sky-50 to-white p-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-sky-700">Risk Check</p>
+          <p className="mt-2 text-slate-900 font-bold text-lg">Lower is safer</p>
+          <p className="mt-1 text-sm text-slate-600">Lower standard deviation and beta usually mean lower volatility.</p>
+        </div>
+        <div className="rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-white p-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-amber-700">Cost Check</p>
+          <p className="mt-2 text-slate-900 font-bold text-lg">Watch hidden drags</p>
+          <p className="mt-1 text-sm text-slate-600">Expense ratio, turnover, and exit load can quietly reduce long-term returns.</p>
         </div>
       </div>
         </>
